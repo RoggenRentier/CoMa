@@ -26,30 +26,29 @@ def play_manual_mode():
     global game
 
     guesses = 0
-    while guesses < game.length + 1:
+    while guesses < game.length + 1 and not game.won:
         guess = input("Wort: ").lower()
-        if guess == solution:
-            game.game_won(solution)
-            return
-        else:
-            #check if the guess is valid
-            if len(guess) != len(solution):
-                print("Das Wort hat", len(solution), "Buchstaben, du hast aber", len(guess), "Buchstaben eingegeben.")
-                continue
-            
-            validity = valid_word(guess, game.words)
-            if validity == 0:
-                pass
-            elif validity == 1:
-                print("Bitte gib ein Wort ein, das nur aus Buchstaben besteht.")
-                continue
-            else: #validity == 2
-                print("Das Wort existiert nicht. Bitte versuche es erneut.")
-                continue
 
-            #check if the pattern is valid
-            print("Player 1: please enter the pattern for the word Player 2 just entered")
+        #check if the guess is valid
+        if len(guess) != len(solution):
+            print("Das Wort hat", len(solution), "Buchstaben, du hast aber", len(guess), "Buchstaben eingegeben.")
+            continue
+        
+        validity = valid_word(guess, game.words)
+        if validity == 0:
+            pass
+        elif validity == 1:
+            print("Bitte gib ein Wort ein, das nur aus Buchstaben besteht.")
+            continue
+        else: #validity == 2
+            print("Das Wort existiert nicht. Bitte versuche es erneut.")
+            continue
+
+        #check if the pattern is valid
+        print("Player 1: please enter the pattern for the word Player 2 just entered")
+        while True:
             pattern = input("Pattern: ")
+
             if len(pattern) != len(solution):
                 print("The pattern has to have the same length as the solution.")
                 continue
@@ -58,10 +57,17 @@ def play_manual_mode():
                 print("The pattern can only contain 0, 1 and 2.")
                 continue
 
-            clear_screen()
-            print(color_word(pattern, guess))
-            guesses += 1
-    print("Du hast das Wort nicht erraten. Das Wort war:", solution)
+            break
+
+        clear_screen()
+        print(color_word(pattern, guess))
+        guesses += 1
+
+        game.updateGame(guess, pattern)
+
+
+    if not game.won:
+        print("Du hast das Wort nicht erraten. Das Wort war:", solution)
 
 
 
@@ -69,31 +75,36 @@ def play_manual_mode():
 #%%
 def play_auto_mode():
     """plays the game in auto mode"""
+
+    global game
+
     guesses = 0
-    while guesses < game.length + 1: 
+    while guesses < game.length + 1 and not game.won: 
         guess = input("Wort: ").lower()
-        if guess == solution:
-            game.game_won()
-            return
-        else:
-            #check if the guess is valid
-            if len(guess) != len(solution):
-                print("Das Wort hat", len(solution), "Buchstaben, du hast aber", len(guess), "Buchstaben eingegeben.")
-                continue
-            validity = valid_word(guess, game.words)
-            if validity == 0:
-                pass
-            elif validity == 1:
-                print("Bitte gib ein Wort ein, das nur aus Buchstaben besteht.")
-                continue
-            else: #validity == 2
-                print("Das Wort existiert nicht. Bitte versuche es erneut.")
-                continue
+        
+        #check if the guess is valid
+        if len(guess) != len(solution):
+            print("Das Wort hat", len(solution), "Buchstaben, du hast aber", len(guess), "Buchstaben eingegeben.")
+            continue
+        validity = valid_word(guess, game.words)
+        if validity == 0:
+            pass
+        elif validity == 1:
+            print("Bitte gib ein Wort ein, das nur aus Buchstaben besteht.")
+            continue
+        else: #validity == 2
+            print("Das Wort existiert nicht. Bitte versuche es erneut.")
+            continue
             
 
-            print(color_word(get_pattern(guess, solution), guess))
-            guesses += 1
-    print("Du hast das Wort nicht erraten. Das Wort war:", solution)
+        print(color_word(get_pattern(guess, solution), guess))
+        guesses += 1
+
+        game.updateGame(guess, get_pattern(guess, solution))
+
+
+    if not game.won:
+        print("Du hast das Wort nicht erraten. Das Wort war:", solution)
 
 
 #%%
