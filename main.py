@@ -11,101 +11,33 @@
 
 #%% Run this first
 import os
+import random
 
 from methods import *
+from game import Game
 
-white = "\033[0m"
-yellow = "\033[1;33m"
-green = "\033[1;32m"
+global game
 
-
-
-#%%
-def get_pattern(v, w):
-    """matching pattern of v (guess) in w (solution) according to wordle rules"""
-    pattern = [0] * len(v)
-
-    # check for correct letters at correct positions
-    for i in range(len(v)):
-        if v[i] == w[i]:
-            pattern[i] = 2
-
-    # check for correct letters at wrong positions
-    # (only if letter is not already marked as correct)
-    for i in range(len(v)):
-        if v[i] != w[i] and occurences_till_now(v, pattern, i) <= occurences_in_solution(v[i], w, pattern):
-            pattern[i] = 1
-
-    return ''.join([str(x) for x in pattern])
-                
-#%%
-def occurences_till_now(v, pattern, i):
-    """returns the number of occurences of v[i] in v[0..i]
-       excluding correct letters at correct positions"""
-    count = 0
-    for j in range(i+1):
-        if v[j] == v[i] and pattern[j] != 2:
-            count += 1
-    return count
-    
-#%%
-def occurences_in_solution(letter, solution, pattern):
-    """returns the number of occurences of letter in solution
-       excluding correct letters at correct positions"""
-    count = 0
-    for i in range(len(solution)):
-        if solution[i] == letter and pattern[i] != 2:
-            count += 1
-    return count
-
-#%%
-def color_word(pattern, word):
-    """returns a colored version of word according to pattern
-       0 -> white
-       1 -> yellow
-       2 -> green"""
-    colored_word = ""
-    for i in range(len(pattern)):
-        if pattern[i] == "0":
-            colored_word += word[i]
-        elif pattern[i] == "1":
-            colored_word += yellow + word[i] + white
-        elif pattern[i] == "2":
-            colored_word += green + word[i] + white
-    return colored_word + white
-
-#%%
-def clear_screen():
-    """clears the terminal, works on windows, macOS and Linux"""
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-#%%
-def check_manual_mode():
-    """asks the user if he wants to play in manual mode"""
-    while True:
-        mode = input("Do you want to play in manual mode? (y/n): ")
-        if mode == "y":
-            return True
-        elif mode == "n":
-            return False
-        else:
-            print("Please enter y or n.")
 
 #%%
 def play_manual_mode():
     """plays the game in manual mode"""
+
+    global game
+
     guesses = 0
-    while guesses < 10:
-        guess = input("Wort: ")
+    while guesses < game.length + 1:
+        guess = input("Wort: ").lower()
         if guess == solution:
-            solved()
+            game.game_won(solution)
             return
         else:
+            #check if the guess is valid
             if len(guess) != len(solution):
                 print("Das Wort hat", len(solution), "Buchstaben, du hast aber", len(guess), "Buchstaben eingegeben.")
                 continue
             
-            validity = valid_word(guess, words)
+            validity = valid_word(guess, game.words)
             if validity == 0:
                 pass
             elif validity == 1:
@@ -115,6 +47,7 @@ def play_manual_mode():
                 print("Das Wort existiert nicht. Bitte versuche es erneut.")
                 continue
 
+            #check if the pattern is valid
             print("Player 1: please enter the pattern for the word Player 2 just entered")
             pattern = input("Pattern: ")
             if len(pattern) != len(solution):
@@ -130,20 +63,24 @@ def play_manual_mode():
             guesses += 1
     print("Du hast das Wort nicht erraten. Das Wort war:", solution)
 
+
+
+
 #%%
 def play_auto_mode():
     """plays the game in auto mode"""
     guesses = 0
-    while guesses < 10: 
-        guess = input("Wort: ")
+    while guesses < game.length + 1: 
+        guess = input("Wort: ").lower()
         if guess == solution:
-            solved()
+            game.game_won()
             return
         else:
+            #check if the guess is valid
             if len(guess) != len(solution):
                 print("Das Wort hat", len(solution), "Buchstaben, du hast aber", len(guess), "Buchstaben eingegeben.")
                 continue
-            validity = valid_word(guess, words)
+            validity = valid_word(guess, game.words)
             if validity == 0:
                 pass
             elif validity == 1:
@@ -160,56 +97,90 @@ def play_auto_mode():
 
 
 #%%
-def solved():
-    """congratuates the player for solving the word"""
-    print("Du hast das Wort erraten!")
+def check_mode():
+    """asks the user which mode he wants to play
+       0: manual mode
+       1: 2 player auto mode
+       2: 1 player auto mode"""
+    while True:
+        print("In which mode do you want to play?")
+        print("0: manual mode")
+        print("1: 2 player auto mode")
+        print("2: 1 player auto mode")
+        mode = input("mode: ")
+        if mode not in ["0", "1", "2"]:
+            print("Please enter 0, 1 or 2.")
+            continue
+        else:
+            return int(mode)
+
 
 #%%
-def valid_word(word, words):
-    """checks if word only contains letters and is contained in allWords.txt
-       0 -> valid word
-       1 -> not only letters
-       2 -> not in allWords.txt"""
+def init_solution_2player():
+    """asks the user for the solution word"""
+
+    global game
+
+    print("Spieler 1: Bitte gib ein Wort ein, das der andere Spieler erraten soll.")
+    while True:
+        solution = input("Wort: ").lower()
+        #words = get_words(len(solution))
+        game = Game(len(solution))
+
+        validity = valid_word(solution, game.words)
+        if validity == 0:
+            clear_screen()
+            return solution
+        elif validity == 1:
+            print("Bitte gib ein Wort ein, das nur aus Buchstaben besteht.")
+            continue
+        else: #validity == 2
+            print("Das Wort existiert nicht. Bitte versuche es erneut.")
+            continue
+
+
+def init_solution_1player():
+    """program generates a number from 5-25 (probability based on word length distribution), 
+    program chooses a random word with that length"""
+    global game
+
+    #number of words with length n: 5-25
+    weights = [6784, 13604, 25455, 48472, 84671, 128381, 165226, 187985, 190164, 181289, 167661, 148211, 128337, 106668, 85571, 66373, 49748, 36560, 25984, 18292, 12694]
+    n = random.choices(range(5, 26), weights=weights)[0]
+
+    game = Game(n)
+    return random.choice(game.words)
     
-    letters = set("abcdefghijklmnopqrstuvwxyzßäöü")
-    if all(e in letters for e in word):
-        if word in words:   #TODO: words are sorted, binary search is possible.
-            return 0
-        return 2    
-    else: 
-        return 1
 
 #%%
-def valid_pattern(pattern):
-    """checks if pattern only contains 0, 1 and 2"""
-    return all(e in "012" for e in pattern)
+def clear_screen():
+    """clears the terminal, works on windows, macOS and Linux"""
+    os.system('cls' if os.name == 'nt' else 'clear')
 
 
-#%%
+
+
+
+
+#%% Main Program
+
 clear_screen()
-manual = check_manual_mode()
 
-print("Spieler 1: Bitte gib ein Wort ein, das der andere Spieler erraten soll.")
-while True:
-    solution = input("Wort: ")
-    words = get_words(len(solution))
+mode = check_mode()
 
-    validity = valid_word(solution, words)
-    if validity == 0:
-        clear_screen()
-        break
-    elif validity == 1:
-        print("Bitte gib ein Wort ein, das nur aus Buchstaben besteht.")
-        continue
-    else: #validity == 2
-        print("Das Wort existiert nicht. Bitte versuche es erneut.")
-        continue
+clear_screen()
 
-
-print("Spieler 2: Du hast 10 Versuche, um das Wort zu erraten. Das Wort hat", len(solution), "Buchstaben.")
-
-if not manual:
-    play_auto_mode()
+if mode < 2:
+    solution = init_solution_2player()
+    print("Spieler 2: Du hast", game.length+1, "Versuche, um das Wort zu erraten. Das Wort hat", game.length, "Buchstaben.")
 else:
+    solution = init_solution_1player()
+    print("Du hast", game.length+1, "Versuche, um das Wort zu erraten. Das Wort hat", game.length, "Buchstaben.")
+
+
+if mode == 0:
     play_manual_mode()
+else:
+    play_auto_mode()
+    
 

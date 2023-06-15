@@ -1,3 +1,7 @@
+#CoMa-specific
+allWords.txt
+test.py
+
 # VSCode
 .vscode/*
 !.vscode/settings.json
