@@ -27,9 +27,8 @@ class Game:
         self.won = True
         print("Du hast das Wort erraten!")
 
-    def showHistory(self):
-        #TODO
-        a = 1
+    #TODO def showHistory(self):
+    
         
     def getPossWords(self):
         return self.pWords

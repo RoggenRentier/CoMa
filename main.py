@@ -156,8 +156,8 @@ def init_solution_1player():
     global game
 
     #number of words with length n: 5-25
-    weights = [6784, 13604, 25455, 48472, 84671, 128381, 165226, 187985, 190164, 181289, 167661, 148211, 128337, 106668, 85571, 66373, 49748, 36560, 25984, 18292, 12694]
-    n = random.choices(range(5, 26), weights=weights)[0]
+    my_weights = [6784, 13604, 25455, 48472, 84671, 128381, 165226, 187985, 190164, 181289, 167661, 148211, 128337, 106668, 85571, 66373, 49748, 36560, 25984, 18292, 12694]
+    n = random.choices(range(5, 26), weights=my_weights)[0]
 
     game = Game(n)
     return random.choice(game.words)
