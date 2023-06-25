@@ -1,5 +1,7 @@
 #%%
 
+import os
+
 white = "\033[0m"
 yellow = "\033[1;33m"
 green = "\033[1;32m"
@@ -13,7 +15,7 @@ def get_words(n):
     
     letters = set("abcdefghijklmnopqrstuvwxyzßäöü")
 
-    words = []  #TODO numpy array might be faster
+    words = []
     with open("allWords.txt", "r") as file:
         for line in file:
             line = line.strip()
@@ -37,7 +39,7 @@ def valid_word(word, words):
     
     letters = set("abcdefghijklmnopqrstuvwxyzßäöü")
     if all(e in letters for e in word):
-        if word in words:   #TODO: words are sorted, binary search is possible.
+        if word in words:
             return 0
         return 2    
     else: 
@@ -101,3 +103,8 @@ def color_word(pattern, word):
         elif pattern[i] == "2":
             colored_word += green + word[i] + white
     return colored_word + white
+
+#%%
+def clear_screen():
+    """clears the terminal, works on windows, macOS and Linux"""
+    os.system('cls' if os.name == 'nt' else 'clear')
