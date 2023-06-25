@@ -35,16 +35,17 @@ class Game:
         return self.pWords
 
 
-    def entropy(self, g , pWords):
+    def entropy(self, g):
         #TODO implement entropy
         return random.randint(1,1000)
 
     def sortGuesses(self, strict):
-        sorted_list = []
         if strict:
-            sorted_list = sorted (self.pWords , key = lambda a : a[1])
+            inlist = [(x, self.entropy(x)) for x in self.pWords]
+            sorted_list = sorted(inlist , key = lambda a : a[1])
         else:
-            sorted_list = sorted(self.words, key=lambda a: a[1])
+            inlist = [(x, self.entropy(x)) for x in self.words]
+            sorted_list = sorted(inlist, key=lambda a: a[1])
         return sorted_list
     
     def showHistory(self):
@@ -58,24 +59,21 @@ class Game:
             print(self.color_letter(i) + i + "\033[0m", end=" ")
         print("\n")
 
-    def showHints(self, pWords, sortedList):
-        five_words = []
-        lowest_ent = 100000
-        for word in pWords:
-            ent = self.entropy(word,pWords)
-            if ent < lowest_ent:
-                lowest_ent = ent
-                five_words.append(word)
-                if len(five_words) == 5:
-                    break
+    def showHints(self, pWords, sorted_list):
+        five_words = sorted_list[-5:]
 
-        for word in five_words:
-            print(word)
+        print("Die 5 Wörter mit der höchsten Entropie sind:\n")
+
+        for e in five_words:
+            print(e[0])
+
+        print()
 
         if len(pWords) <= 100:
+            print("Alle möglichen verbleibenden Wörter sind:\n")
             for word in pWords:
                 print(word)
-        return 0
+
 
     def create_letters(self):
         """creates a dictionary with letters as keys and 0 as value"""

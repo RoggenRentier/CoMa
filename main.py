@@ -26,6 +26,9 @@ def play_manual_mode():
 
     guesses = 0
     while guesses < game.length + 1 and not game.won:
+
+        ask_hint()
+
         guess = input("Wort: ").lower()
 
         #check if the guess is valid
@@ -84,6 +87,9 @@ def play_auto_mode():
 
     guesses = 0
     while guesses < game.length + 1 and not game.won: 
+        
+        ask_hint()
+
         guess = input("Wort: ").lower()
         
         #check if the guess is valid
@@ -176,7 +182,35 @@ def init_solution_1player(length):
     return random.choice(game.words)
     
 
+def ask_hint():
+    """asks the player if he wants a hint"""
+    
+    global game
 
+    hint = input("Willst du einen Hinweis bekommen? (y/n) ")
+    while True:
+        if hint not in ["y", "n"]:
+            print("Bitte gebe y oder n ein.")
+            hint = input("Willst du einen Hinweis bekommen? (y/n) ")
+            continue
+        break
+    
+    if hint == "y":
+        strict = input("Willst du nur noch mögliche Wörter als Hinweis haben? (y/n) ")
+
+        while True:
+            if strict not in ["y", "n"]:
+                print("Bitte gebe y oder n ein.")
+                strict = input("Willst du nur noch mögliche Wörter als Hinweis haben? (y/n) ")
+                continue
+            break
+
+        print()
+        
+        if strict == "y":
+            game.showHints(game.pWords, game.sortGuesses(True))
+        else:
+            game.showHints(game.words, game.sortGuesses(False))
 
 #%%
 def get_word_length():
