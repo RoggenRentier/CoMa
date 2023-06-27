@@ -7,7 +7,7 @@ class Game:
     def __init__(self, n):
         self.length = n
         self.pWords = get_words(n)
-        self.words = self.pWords.copy()
+        self.words = self.pWords.copy() 
         self.letters = self.create_letters()
         self.history = []
         self.won = False
@@ -18,9 +18,12 @@ class Game:
             self.game_won(guess)
             return
         # removes all words from pWords that don't match the pattern
+        new_pWords = []
         for e in self.pWords:
-            if get_pattern(guess, e) != pattern:
-                self.pWords.remove(e)
+            if get_pattern(guess, e) == pattern:
+                new_pWords.append(e)
+            
+        self.pWords = new_pWords
 
     def game_won(self, solution):
         """congratulates the player and saves the solution"""

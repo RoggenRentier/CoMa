@@ -108,3 +108,10 @@ def color_word(pattern, word):
 def clear_screen():
     """clears the terminal, works on windows, macOS and Linux"""
     os.system('cls' if os.name == 'nt' else 'clear')
+
+#%% just for testing
+def print_file(filename, words):
+    """prints all words in words to filename"""
+    with open(filename, "w") as file:
+        for word in words:
+            file.write(word + "\n")
