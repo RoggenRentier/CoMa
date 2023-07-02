@@ -1,4 +1,7 @@
 import random
+import itertools
+import math
+
 from string import ascii_lowercase
 
 from methods import *
@@ -11,6 +14,7 @@ class Game:
         self.letters = self.create_letters()
         self.history = []
         self.won = False
+        self.all_patterns = self.get_all_patterns(n)
 
     def updateGame(self, guess, pattern):
         self.history.append((guess, pattern))
@@ -39,8 +43,31 @@ class Game:
 
 
     def entropy(self, g):
-        #TODO implement entropy
-        return random.randint(1,1000)
+        """returns the entropy of a guess g"""
+        entropy = 0
+        for e in self.all_patterns:
+            prob = self.probability(g, e)
+            if prob <= 0:
+                continue
+            entropy += -prob * math.log(prob, 2)
+
+        return entropy
+
+    def probability(self, g, x):
+        """returns the probability of a guess g producing the pattern x
+           helper function for entropy"""
+        
+        prob = 0
+
+        #numerator
+        for e in self.pWords:
+            if get_pattern(g, e) == x:
+                prob += 1
+
+        #denominator
+        prob /= len(self.pWords)
+
+        return prob
 
     def sortGuesses(self, strict):
         if strict:
@@ -113,4 +140,10 @@ class Game:
             
         return red
 
-            
+    def get_all_patterns(self, n):
+        """returns a list of all possible patterns of lenght n 
+           e.g. ["00","01","02","10","11","12","20","21","22"]for n = 2"""      
+        elem = ['0','1','2']
+        arr = list(itertools.product(elem, repeat=4))
+        arr = ["".join(x) for x in arr]  #turns tuples of chars into strings
+        return arr 
