@@ -25,15 +25,18 @@ def play_manual_mode():
     global game
 
     guesses = 0
+    validity = 0
     while guesses < game.length + 1 and not game.won:
 
-        ask_hint()
+        if validity == 0:
+            ask_hint()
 
         guess = input("Wort: ").lower()
 
         #check if the guess is valid
         if len(guess) != len(solution):
             print("Das Wort hat", len(solution), "Buchstaben, du hast aber", len(guess), "Buchstaben eingegeben.")
+            validity = 1
             continue
         
         validity = valid_word(guess, game.words)
@@ -86,18 +89,21 @@ def play_auto_mode():
     global game
 
     guesses = 0
+    validity = 0
     while guesses < game.length + 1 and not game.won: 
         
-        ask_hint()
+        if validity == 0:
+            ask_hint()
 
         guess = input("Wort: ").lower()
         
         #check if the guess is valid
         if len(guess) != len(solution):
             print("Das Wort hat", len(solution), "Buchstaben, du hast aber", len(guess), "Buchstaben eingegeben.")
+            validity = 1
             continue
         validity = valid_word(guess, game.words)
-        if validity == 0:
+        if validity == 0: #valid word
             pass
         elif validity == 1:
             print("Bitte gib ein Wort ein, das nur aus Buchstaben besteht.")
@@ -107,7 +113,6 @@ def play_auto_mode():
             continue
             
 
-        #print(color_word(get_pattern(guess, solution), guess))
         guesses += 1
 
         game.updateGame(guess, get_pattern(guess, solution))
