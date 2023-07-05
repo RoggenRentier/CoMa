@@ -1,0 +1,124 @@
+\documentclass[12pt]{scrartcl} % Spezifikation der Dokumentenklasse
+\usepackage[utf8]{inputenc}    % Erweiterung der darstellbaren 
+\usepackage[T1]{fontenc}       % Zeichen
+\usepackage{lmodern}           % Schriftart
+\usepackage[ngerman]{babel}    % Deutsche Silbentrennung und 	                    
+                               % Bezeichnungen ("Inhaltsverzeichnis")
+\usepackage{amsmath, amssymb, amsthm}  
+							  % Mathematische Symbole & Umgebungen
+\usepackage{url}               % Weblinks
+\usepackage[ruled, vlined, linesnumbered, german]{algorithm2e}
+							  % Algorithmen
+							   
+\usepackage{graphicx, subcaption} % Graphiken
+
+\newcommand{\R}{\mathbb{R}}    % Abkuerzungen
+
+\newtheorem{satz}{Satz}[section]
+
+% Beweis und Lösungsumgebung
+\newenvironment{Beweis}{\noindent\textbf{Beweis: }}{\hfill $\Box$}
+\newenvironment{Lösung}{\noindent\textbf{Lösung: }}{\hfill $\Box$}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Seite formatieren
+\pagestyle{empty} \topmargin -2cm \textheight 24cm \textwidth 16.0 cm
+\oddsidemargin -0.3cm % fuer Deskjet
+% \oddsidemargin +0.3cm  % fuer Laserdrucker
+
+\pagestyle{plain}
+\setcounter{page}{1}
+\pagenumbering{arabic}
+
+\begin{document}
+\begin{minipage}[t]{0.49\textwidth}
+	\noindent 
+	Fachbereich Mathematik und Statistik
+	\vspace{0.5ex} \newline
+	Dr. Stefan Frei
+	\vspace{0.5ex} \newline
+	Moritz Link, Dr. Jan Bartsch
+	\vspace{0.5ex} \newline
+	Sommersemester 2023
+	\vspace{1ex} \newline
+\end{minipage}
+
+
+\begin{center}
+ {\Large{\textbf{Computereinsatz in der Mathematik}}}
+  \vspace{1.5ex} \\
+  Finaler Report
+ \vspace{1.5ex} \\
+ Cedric Krug, Matr-Nr.: 01/1087774 \\
+ Natascha Schulz, Matr-Nr.: 01/1082597\\
+ %Zimo Yang, Matr-Nr.: 01/770116\\ 
+ \vspace{1.5ex}
+\end{center}
+
+% ----------------------------------------------------------------------------------------------
+
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Here you can add the exercise
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%
+%
+%
+
+--------------------------------------------------------------------------------------------
+%
+%
+\\[0.2cm]
+%
+%\begin{Lösung} \\
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Gruppe}
+Unsere Gruppe besteht aus zwei Personen:\\
+Cedric Krug - Informatik (6. Semester)\\
+Natascha Schulz - Finanzmathematik (2. Semester)
+
+\section{Herausforderungen/Probleme}
+\begin{itemize}
+    \item 
+         Auf dem Programm PyCharm funktioniert die \texttt{clear\_screen} Methode nicht, da PyCharm kein vollständiges Terminal emuliert. Dies funktioniert laut Online-Recherchen nur, wenn ein Windows-/Unix-Terminal verwendet bzw. vollständig emuliert wird.
+    \item 
+         Der Hinweis einer vorgeschlagenen Liste ist sehr hilfreich. Jedoch braucht unser Programm teilweise sehr lange (mehrere Minuten bis wenige Stunden (wenn man vor dem ersten Guess nach einem Hinweis fragt)) bis eine Liste erstellt wurde. Dies liegt daran, dass vor allem am Anfang die Pattern jedes einzigen Worts mit dem jedes anderen Worts berechnet werden, was bei 10.000en Wörtern relativ lange dauert.
+    \item 
+        Das Bugfixing war teilweise recht schwer, da u.a. Entropie-Werte nicht von Hand überprüft werden können und es keine Test-sets mit bekannten Ergebnissen gab.
+    \item 
+        Wenn man die noch möglichen Wörter stark reduziert hat (auf unter 100) sind die Vorschläge des Programms mehr oder weniger nutzlos (zumindest im \texttt{strict}-Modus) da die Entropie aller noch möglichen Wörter gerundet 0 entspricht. 
+
+\end{itemize}
+
+\section{Fragen}
+    \begin{enumerate}
+        \item 
+        Welche Probleme können im Fall \texttt{strict=True} auftreten? \\
+        Bereits ausgeschlossene Wörter könnten eine weitaus höhere Entropie haben. Wenn man sich grundlos zu noch möglichen Wörtern limitiert verhindert man dadurch evt. die Anzahl an noch möglichen Wörtern stark zu dezimieren. Auf der anderen Seite hat \texttt{strict=True} den Vorteil, dass das Ergebnis in einem erträglichen Zeitrahmen ausgegeben wird.
+                \vspace{1cm}
+    \item           
+	Wie viele Rateversuche benötigen Sie durchschnittlich mit bzw. ohne Hinweise durch den Computer? \\
+                 Bei 10 Durchläufen (5 im Modus zwei + 3 im Modus 1 + 2 im Modus 1) brauchten wir zwischen 2 und 16 Versuchen. Da dies auch von der Wortlänge abhängt, berechnen wir den Durchschnittswert abgänig der maximalen Versuchsmöglichkeiten (Wortlänge n +1). \\
+                 Durchschnittliche Versuche ohne Hinweise: $$(\frac{8}{13}+\frac{4}{5}+\frac{12}{12}+\frac{7}{13}+\frac{4}{5}+\frac{2}{10}+\frac{7}{13}+\frac{16}{16}+\frac{8}{8}+\frac{4}{4})/10 $$ 
+                 $$= \frac{7,4923}{10} = 0,7492 \approx 75\%$$ \\
+                 Bei den Spielläufen ist das gesuchte Wort durchschnittliche nach $75\%$ der Rateversuche gefunden.
+                 Und Durchschnittliche Versuche mit Hinweise: $$(\frac{4}{11}+\frac{3}{8}+\frac{4}{15}+\frac{2}{5}+\frac{3}{6}+\frac{4}{9}+\frac{8}{14}+\frac{6}{10}+\frac{4}{4}+\frac{3}{10})/10 $$ 
+                 $$= \frac{4,8217}{10} = 0,4822 \approx 48\%$$ \\
+                 Bei den Spielläufen mit Hinweisen ist das gesuchte Wort durchschnittliche nach $48\%$ der Rateversuche gefunden.
+                 \\ 
+                 Dies ist zwar keine aussagekräftige Statistik aufgrund von zu wenigen erfassten Spieldurchläufen mit zu wenigen Versuchspersonen. Aber für unsere Spieldurchläufe lässt sich ableiten, dass man ca 1,5 mal länger braucht um das Lösungswort zu erraten, wenn man keine Hinweise nutzt.
+    \item 
+        Sind die Hinweise des Computers immer zielführend? \\
+                 Die Hinweise des Computer sind besonders sinnvoll, wenn man zusammenhängende Buchstaben richtig erraten hat, oder auch sobald der Anfangsbuchstabe bekannt ist. Der Hinweis, dass ein Buchstabe im Wort vorkommt, ist oft keine große Hilfe bei der Wortfindung. \\
+                 Wie oben erwähnt sind die Hinweise (im \texttt{strict}-Modus) nicht mehr hilfreich sobald die noch möglichen Wörter auf eine geringe Zahl reduziert werden, da sich die noch möglichen Wörter vermutlich nicht genug voneinander unterscheiden um ausreichend Wörter auszuschließen.
+                 
+        
+	
+    \end{enumerate}
+
+
+\end{document}
