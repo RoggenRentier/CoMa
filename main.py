@@ -4,9 +4,6 @@
 # Natascha Schulz
 # natascha.schulz@uni-konstanz.de
 
-# Zimo Yang
-# zimo.yang@uni-konstanz.de
-
 
 
 #%% Run this first
