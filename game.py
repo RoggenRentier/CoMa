@@ -94,8 +94,8 @@ class Game:
 
         print("Die 5 Wörter mit der höchsten Entropie sind:\n")
 
-        for e in five_words:
-            print(e[0])
+        for e in reversed(five_words):
+            print(str(e[0]), " (" + str(e[1]) + ")")
 
         print()
 
